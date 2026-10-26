@@ -1,5 +1,5 @@
 
-package com.example.webautomation;
+package com.example.pwthorminibrowser;
 
 import android.app.Activity;
 import android.os.Bundle;
