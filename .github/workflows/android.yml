@@ -25,18 +25,27 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          packages: ''
 
       - name: Install Android platform
-        run: |
-          sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
+        run: sdkmanager --install "platforms;android-35" "build-tools;35.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Diagnose AndroidManifest XML
+        run: |
+          echo "----- Manifest contents -----"
+          cat -n app/src/main/AndroidManifest.xml
+          echo "----- XML validation -----"
+          python3 -c "import xml.etree.ElementTree as ET; ET.parse('app/src/main/AndroidManifest.xml'); print('Manifest XML is valid')"
+
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
+
+      - name: Check APK output
+        run: |
+          ls -lh app/build/outputs/apk/debug/
+          test -s app/build/outputs/apk/debug/app-debug.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -44,4 +53,4 @@ jobs:
           name: pwthor-mini-browser-debug
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
-
+          
